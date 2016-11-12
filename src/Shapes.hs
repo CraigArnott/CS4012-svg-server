@@ -40,6 +40,7 @@ data Style = Stroke Colour
            | Outline Int
            | Height Int
            | Width Int
+           | Position Point
              deriving Show
 
 -- Colours
@@ -93,24 +94,3 @@ transform (Compose t1 t2)            p = transform t2 $ transform t1 p
 
 data Drawing = Drawing [(Transform,Shape,Stylesheet)]
 
--- interpretation function for drawings
-
-inside :: Point -> Drawing -> Bool
-inside p d = or $ map (inside1 p) d
-
-inside1 :: Point -> (Transform, Shape) -> Bool
-inside1 p (t,s) = insides (transform t p) s
-
-insides :: Point -> Shape -> Bool
-p `insides` Empty = False
-p `insides` Circle = distance p <= 1
-p `insides` Square = maxnorm  p <= 1
-
-
-distance :: Point -> Double
-distance (Vector x y ) = sqrt ( x**2 + y**2 )
-
-maxnorm :: Point -> Double
-maxnorm (Vector x y ) = max (abs x) (abs y)
-
-testShape = (scale (point 10 10), circle)
