@@ -2,8 +2,8 @@ module Shapes(
   Shape, Point, Vector, Transform, Drawing,
   point, getX, getY,
   empty, circle, square,
-  identity, translate, rotate, scale, (<+>),
-  inside)  where
+  identity, translate, rotate, scale, (<+>)
+  )  where
 
 -- Utilities
 
