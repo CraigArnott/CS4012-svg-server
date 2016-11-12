@@ -6,7 +6,7 @@ import Text.Blaze.Svg11 ((!), mkPath, rotate, l, m)
 import qualified Text.Blaze.Svg11 as S
 import qualified Text.Blaze.Svg11.Attributes as A
 import Text.Blaze.Svg.Renderer.String (renderSvg)
-import Shape
+import Shapes
 
 doSample :: IO ()
 doSample = do
@@ -27,5 +27,5 @@ makePath = mkPath $ do
   m 4 5 
 
 makeTransform :: S.AttributeValue
-makeTransform = rotate 50
+makeTransform = S.rotate 50
 
