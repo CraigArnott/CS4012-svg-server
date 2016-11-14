@@ -1,7 +1,9 @@
 module Shapes(
-  Shape, Point, Vector, Transform, Drawing,
+  Shape (..), Point, Vector, Transform (..), Drawing (..), Style (..), Stylesheet, Colour (..),
   point, getX, getY,
   empty, circle, square,
+  red, green, blue,
+  stroke, fill, outline, height, width,
   identity, translate, rotate, scale, (<+>)
   )  where
 
@@ -40,8 +42,16 @@ data Style = Stroke Colour
            | Outline Int
            | Height Int
            | Width Int
-           | Position Point
              deriving Show
+
+stroke, fill :: Colour -> Style
+stroke c = Stroke c
+fill c = Fill c
+
+outline, height, width :: Int -> Style
+outline x = Outline x
+height x = Height x
+width x = Width x
 
 -- Colours
 
@@ -49,6 +59,12 @@ data Colour = Red
             | Green
             | Blue
               deriving Show
+
+red, green, blue :: Colour
+
+red = Red
+green = Green
+blue = Blue
 
 -- Shapes
 
