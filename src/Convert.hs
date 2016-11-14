@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Convert(doSample)  where
+module Convert(doSample, convert)  where
 
 import Text.Blaze.Svg11 ((!), mkPath, rotate, l, m)
 import qualified Text.Blaze.Svg11 as S
@@ -11,8 +11,8 @@ import System.IO
 
 -- convert drawing to svg
 
-convert :: Drawing -> S.Svg
-convert (Drawing x) = docHeader $ foldl1 (>>) $ map convertShape x
+convert :: Drawing -> String
+convert (Drawing x) = renderSvg $ docHeader $ foldl1 (>>) $ map convertShape x
 
 -- convert shape to svg
 
@@ -56,7 +56,7 @@ doSample = do
   writeFile "test.svg" $ renderSvg svgDoc
 
 svgDoc :: S.Svg
-svgDoc = S.docTypeSvg ! A.version "1.1" ! A.width "150" ! A.height "100" ! A.viewbox "0 0 3 2" $ do
-      S.rect ! A.width "1" ! A.height "2" ! A.fill "#008d46"
-      S.rect ! A.width "1" ! A.height "2" ! A.fill "#ffffff"
-      S.rect ! A.width "1" ! A.height "2" ! A.fill "#d2232c"
+svgDoc = S.docTypeSvg ! A.version "1.1" ! A.width "150" ! A.height "100" ! A.viewbox "0 0 3 2" $
+      (S.rect ! A.width "1" ! A.height "2" ! A.fill "#008d46") >>
+      (S.rect ! A.width "1" ! A.height "2" ! A.fill "#ffffff") >>
+      (S.rect ! A.width "1" ! A.height "2" ! A.fill "#d2232c")
