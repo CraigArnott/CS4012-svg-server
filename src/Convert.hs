@@ -17,7 +17,7 @@ convert (Drawing x) = renderSvg $ docHeader $ foldl1 (>>) $ map convertShape x
 -- convert shape to svg
 
 convertShape :: (Transform, Shape, Stylesheet) -> S.Svg
-convertShape (_, shape, sheet) = foldl (!) (shapeToSvg shape) (parseStylesheet sheet)
+convertShape (_, shape, sheet) = foldl (!) (shapeToSvg shape) (parseStylesheet shape sheet)
 
 -- create header for svg doc
 
@@ -25,18 +25,20 @@ docHeader :: S.Svg -> S.Svg
 docHeader = S.docTypeSvg ! A.version "1.1" ! A.width "150" ! A.height "100" ! A.viewbox "0 0 3 2"
 
 -- parsing transforms
+parseTransform :: Transform -> [S.Attribute]
+parseTransform (Compose x y) = [parseTransform x, parseTransform y]
 
 -- parsing stylesheets
 
-parseStylesheet :: Stylesheet -> [S.Attribute]
-parseStylesheet s = map (styleToAttr) s 
+parseStylesheet :: Shape -> Stylesheet -> [S.Attribute]
+parseStylesheet shape sheet = concat $ map (styleToAttrs shape) sheet 
 
-styleToAttr :: Style -> S.Attribute
-styleToAttr (Stroke c) = A.stroke (colourToHex c)
-styleToAttr (Fill c) = A.fill (colourToHex c)
---styleToAttr (Outline x) = A.
-styleToAttr (Height x) = A.height $ S.toValue x
-styleToAttr (Width x) = A.width $ S.toValue x
+styleToAttrs :: Shape -> Style -> [S.Attribute]
+styleToAttrs _ (Stroke c) = [A.stroke (colourToHex c)]
+styleToAttrs _ (Fill c) = [A.fill (colourToHex c)]
+styleToAttrs _ (Outline x) = [A.strokeWidth $ S.toValue x]
+styleToAttrs Circle (Size x) = [A.r $ S.toValue x]
+styleToAttrs Square (Size x) = [(A.height $ S.toValue x), (A.width $ S.toValue x)]
 
 colourToHex :: Colour -> S.AttributeValue
 colourToHex Red = "#ff0000"

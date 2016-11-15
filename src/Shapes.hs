@@ -3,7 +3,7 @@ module Shapes(
   point, getX, getY,
   empty, circle, square,
   red, green, blue,
-  stroke, fill, outline, height, width,
+  stroke, fill, outline, size,
   identity, translate, rotate, scale, (<+>)
   )  where
 
@@ -40,18 +40,16 @@ type Stylesheet = [Style]
 data Style = Stroke Colour
            | Fill Colour
            | Outline Int
-           | Height Int
-           | Width Int
+           | Size Int
              deriving Show
 
 stroke, fill :: Colour -> Style
 stroke c = Stroke c
 fill c = Fill c
 
-outline, height, width :: Int -> Style
+outline, size :: Int -> Style
 outline x = Outline x
-height x = Height x
-width x = Width x
+size x = Size x
 
 -- Colours
 
