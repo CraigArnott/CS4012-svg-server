@@ -41,6 +41,7 @@ parseTransform :: Transform -> [S.AttributeValue]
 parseTransform Identity = []
 parseTransform (Rotate x) = [S.rotate x]
 parseTransform (Translate (Vector x y )) = [S.translate x y]
+parseTransform (Scale (Vector x y)) = [S.scale x y]
 parseTransform (Compose x y) = (parseTransform x) ++ (parseTransform y)
 
 -- parsing stylesheets
