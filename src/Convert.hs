@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Convert(doSample, convert)  where
+module Convert(convert)  where
 
 import Text.Blaze.Svg11 ((!), mkPath, rotate, l, m)
 import qualified Text.Blaze.Svg11 as S
@@ -12,12 +12,18 @@ import System.IO
 -- convert drawing to svg
 
 convert :: Drawing -> String
-convert (Drawing x) = renderSvg $ docHeader $ foldl1 (>>) $ map convertShape x
+convert (Drawing x) = renderSvg $ docHeader $ foldl1 (>>) $ map convertGraphic x
 
--- convert shape to svg
+-- convert triple to graphic
 
-convertShape :: (Transform, Shape, Stylesheet) -> S.Svg
-convertShape (_, shape, sheet) = foldl (!) (shapeToSvg shape) (parseStylesheet shape sheet)
+convertGraphic :: (Transform, Shape, Stylesheet) -> S.Svg
+convertGraphic (trans, shape, sheet) = let t = buildTransform trans in
+                                       case t of 
+                                        (Nothing) -> convertShape shape sheet
+                                        (Just a) -> foldl (!) (convertShape shape sheet) a
+
+convertShape :: Shape -> Stylesheet -> S.Svg 
+convertShape shape sheet = foldl (!) (shapeToSvg shape) (parseStylesheet shape sheet)
 
 -- create header for svg doc
 
@@ -25,12 +31,19 @@ docHeader :: S.Svg -> S.Svg
 docHeader = S.docTypeSvg ! A.version "1.1" ! A.width "150" ! A.height "100" ! A.viewbox "0 0 3 2"
 
 -- parsing transforms
+
+buildTransform :: Transform -> (Maybe [S.Attribute])
+buildTransform Identity = Nothing
+buildTransform x = Just $ parseTransform x  
+
 parseTransform :: Transform -> [S.Attribute]
-parseTransform (Compose x y) = [parseTransform x, parseTransform y]
+parseTransform Identity = []
+parseTransform (Rotate x) = [A.transform $ S.rotate x]
+parseTransform (Compose x y) = (parseTransform x) ++ (parseTransform y)
 
 -- parsing stylesheets
 
-parseStylesheet :: Shape -> Stylesheet -> [S.Attribute]
+parseStylesheet :: Shape -> Stylesheet -> [S.Attribute] 
 parseStylesheet shape sheet = concat $ map (styleToAttrs shape) sheet 
 
 styleToAttrs :: Shape -> Style -> [S.Attribute]
@@ -51,14 +64,3 @@ shapeToSvg :: Shape -> S.Svg
 shapeToSvg Square = S.rect
 shapeToSvg Circle = S.circle
 
--- sample code
-
-doSample :: IO ()
-doSample = do
-  writeFile "test.svg" $ renderSvg svgDoc
-
-svgDoc :: S.Svg
-svgDoc = S.docTypeSvg ! A.version "1.1" ! A.width "150" ! A.height "100" ! A.viewbox "0 0 3 2" $
-      (S.rect ! A.width "1" ! A.height "2" ! A.fill "#008d46") >>
-      (S.rect ! A.width "1" ! A.height "2" ! A.fill "#ffffff") >>
-      (S.rect ! A.width "1" ! A.height "2" ! A.fill "#d2232c")

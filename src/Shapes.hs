@@ -1,7 +1,6 @@
 module Shapes(
-  Shape (..), Point, Vector, Transform (..), Drawing (..), Style (..), Stylesheet, Colour (..),
+  Shape (..), Point, Vector, Transform (..), Drawing (..), Style (..), Stylesheet, Colour (..), 
   point, getX, getY,
-  empty, circle, square,
   red, green, blue,
   stroke, fill, outline, size,
   identity, translate, rotate, scale, (<+>)
@@ -39,15 +38,14 @@ type Stylesheet = [Style]
 
 data Style = Stroke Colour
            | Fill Colour
-           | Outline Int
-           | Size Int
+           | Outline Double
+           | Size Double
              deriving Show
 
-stroke, fill :: Colour -> Style
-stroke c = Stroke c
-fill c = Fill c
+stroke a = Stroke a
+fill = Fill 
 
-outline, size :: Int -> Style
+outline, size :: Double -> Style
 outline x = Outline x
 size x = Size x
 
@@ -76,35 +74,30 @@ data Shape = Empty
            | Square
              deriving Show
 
-empty, circle, square :: Shape
-
-empty = Empty
-circle = Circle
-square = Square
-
 -- Transformations
 
 data Transform = Identity
            | Translate Vector
            | Scale Vector
            | Compose Transform Transform
-           | Rotate Matrix
+           | Rotate Double
              deriving Show
 
 identity = Identity
 translate = Translate
 scale = Scale
-rotate angle = Rotate $ matrix (cos angle) (-sin angle) (sin angle) (cos angle)
+rotate = Rotate
+--rotate angle = Rotate $ matrix (cos angle) (-sin angle) (sin angle) (cos angle)
 t0 <+> t1 = Compose t0 t1
 
-transform :: Transform -> Point -> Point
-transform Identity                   x = id x
-transform (Translate (Vector tx ty)) (Vector px py)  = Vector (px - tx) (py - ty)
-transform (Scale (Vector tx ty))     (Vector px py)  = Vector (px / tx)  (py / ty)
-transform (Rotate m)                 p = (invert m) `mult` p
-transform (Compose t1 t2)            p = transform t2 $ transform t1 p
+--transform :: Transform -> Point -> Point
+--transform Identity                   x = id x
+--transform (Translate (Vector tx ty)) (Vector px py)  = Vector (px - tx) (py - ty)
+--transform (Scale (Vector tx ty))     (Vector px py)  = Vector (px / tx)  (py / ty)
+--transform (Rotate m)                 p = (invert m) `mult` p
+--transform (Compose t1 t2)            p = transform t2 $ transform t1 p
 
 -- Drawings
 
 data Drawing = Drawing [(Transform,Shape,Stylesheet)]
-
+drawing = Drawing

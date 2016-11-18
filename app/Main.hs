@@ -9,4 +9,4 @@ main = do
   writeFile "test.svg" $ convert $ buildDrawing
 
 buildDrawing :: Drawing
-buildDrawing = Drawing [(Identity, Square, [Fill green, Size 2]), (Identity, Circle, [Fill blue, Size 2])]
+buildDrawing = Drawing [(Rotate 45, Square, [Fill green, Size 2]), (Identity, Circle, [Fill blue, Size 0.1])]
