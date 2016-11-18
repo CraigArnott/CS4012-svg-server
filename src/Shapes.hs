@@ -1,5 +1,5 @@
 module Shapes(
-  Shape (..), Point, Vector, Transform (..), Drawing (..), Style (..), Stylesheet, Colour (..), 
+  Shape (..), Point, Vector (..), Transform (..), Drawing (..), Style (..), Stylesheet, Colour (..), 
   point, getX, getY,
   red, green, blue,
   stroke, fill, outline, size,

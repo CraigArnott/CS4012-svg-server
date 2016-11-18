@@ -2,6 +2,7 @@
 
 module Convert(convert)  where
 
+import Data.List (intersperse)
 import Text.Blaze.Svg11 ((!), mkPath, rotate, l, m)
 import qualified Text.Blaze.Svg11 as S
 import qualified Text.Blaze.Svg11.Attributes as A
@@ -20,7 +21,7 @@ convertGraphic :: (Transform, Shape, Stylesheet) -> S.Svg
 convertGraphic (trans, shape, sheet) = let t = buildTransform trans in
                                        case t of 
                                         (Nothing) -> convertShape shape sheet
-                                        (Just a) -> foldl (!) (convertShape shape sheet) a
+                                        (Just a) -> (convertShape shape sheet) ! a
 
 convertShape :: Shape -> Stylesheet -> S.Svg 
 convertShape shape sheet = foldl (!) (shapeToSvg shape) (parseStylesheet shape sheet)
@@ -28,17 +29,18 @@ convertShape shape sheet = foldl (!) (shapeToSvg shape) (parseStylesheet shape s
 -- create header for svg doc
 
 docHeader :: S.Svg -> S.Svg
-docHeader = S.docTypeSvg ! A.version "1.1" ! A.width "150" ! A.height "100" ! A.viewbox "0 0 3 2"
+docHeader = S.docTypeSvg ! A.version "1.1" ! A.width "1500" ! A.height "1000" ! A.viewbox "0 0 1500 1000"
 
 -- parsing transforms
 
-buildTransform :: Transform -> (Maybe [S.Attribute])
+buildTransform :: Transform -> (Maybe S.Attribute)
 buildTransform Identity = Nothing
-buildTransform x = Just $ parseTransform x  
+buildTransform x = Just $ A.transform $ mconcat $ intersperse " " $ parseTransform x  
 
-parseTransform :: Transform -> [S.Attribute]
+parseTransform :: Transform -> [S.AttributeValue]
 parseTransform Identity = []
-parseTransform (Rotate x) = [A.transform $ S.rotate x]
+parseTransform (Rotate x) = [S.rotate x]
+parseTransform (Translate (Vector x y )) = [S.translate x y]
 parseTransform (Compose x y) = (parseTransform x) ++ (parseTransform y)
 
 -- parsing stylesheets
