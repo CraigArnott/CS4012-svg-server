@@ -13,7 +13,7 @@ import System.IO
 -- convert drawing to svg
 
 convert :: Drawing -> String
-convert (Drawing x) = renderSvg $ docHeader $ foldl1 (>>) $ map convertGraphic x
+convert (Drawing x) = renderSvg $ docHeader $ foldl (>>) empty $ map convertGraphic x
 
 -- convert triple to graphic
 
@@ -24,7 +24,10 @@ convertGraphic (trans, shape, sheet) = let t = buildTransform trans in
                                         (Just a) -> (convertShape shape sheet) ! a
 
 convertShape :: Shape -> Stylesheet -> S.Svg 
+convertShape Empty sheet = empty
 convertShape shape sheet = foldl (!) (shapeToSvg shape) (parseStylesheet shape sheet)
+
+empty = S.rect ! A.height "0" ! A.width "0"
 
 -- create header for svg doc
 
@@ -60,6 +63,7 @@ colourToHex :: Colour -> S.AttributeValue
 colourToHex Red = "#ff0000"
 colourToHex Green = "#00ff00"
 colourToHex Blue = "#0000ff"
+colourToHex (Hex s) = S.toValue s
 
 -- parsing shapes
 

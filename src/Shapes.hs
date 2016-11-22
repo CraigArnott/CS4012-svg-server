@@ -1,6 +1,5 @@
 module Shapes(
   Shape (..), Point, Vector (..), Transform (..), Drawing (..), Style (..), Stylesheet, Colour (..), 
-  point, getX, getY,
   red, green, blue,
   stroke, fill, outline, size,
   identity, translate, rotate, scale, (<+>)
@@ -9,28 +8,11 @@ module Shapes(
 -- Utilities
 
 data Vector = Vector Double Double
-              deriving Show
+              deriving (Show, Read)
 vector = Vector
 
 cross :: Vector -> Vector -> Double
 cross (Vector a b) (Vector a' b') = a * a' + b * b'
-
-mult :: Matrix -> Vector -> Vector
-mult (Matrix r0 r1) v = Vector (cross r0 v) (cross r1 v)
-
-invert :: Matrix -> Matrix
-invert (Matrix (Vector a b) (Vector c d)) = matrix (d / k) (-b / k) (-c / k) (a / k)
-  where k = a * d - b * c
-        
--- 2x2 square matrices are all we need.
-data Matrix = Matrix Vector Vector
-              deriving Show
-
-matrix :: Double -> Double -> Double -> Double -> Matrix
-matrix a b c d = Matrix (Vector a b) (Vector c d)
-
-getX (Vector x y) = x
-getY (Vector x y) = y
 
 -- Styling
 
@@ -40,7 +22,7 @@ data Style = Stroke Colour
            | Fill Colour
            | Outline Double
            | Size Double
-             deriving Show
+             deriving (Show, Read)
 
 stroke a = Stroke a
 fill = Fill 
@@ -54,7 +36,8 @@ size x = Size x
 data Colour = Red
             | Green
             | Blue
-              deriving Show
+            | Hex String
+              deriving (Show, Read)
 
 red, green, blue :: Colour
 
@@ -72,7 +55,7 @@ point = vector
 data Shape = Empty 
            | Circle 
            | Square
-             deriving Show
+             deriving (Show, Read)
 
 -- Transformations
 
@@ -81,7 +64,7 @@ data Transform = Identity
            | Scale Vector
            | Compose Transform Transform
            | Rotate Double
-             deriving Show
+             deriving (Show, Read)
 
 identity = Identity
 translate = Translate
@@ -100,4 +83,4 @@ t0 <+> t1 = Compose t0 t1
 -- Drawings
 
 data Drawing = Drawing [(Transform,Shape,Stylesheet)]
-drawing = Drawing
+               deriving (Show, Read)
