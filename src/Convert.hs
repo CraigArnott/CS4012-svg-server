@@ -23,9 +23,13 @@ convertGraphic (trans, shape, sheet) = let t = buildTransform trans in
                                         (Nothing) -> convertShape shape sheet
                                         (Just a) -> (convertShape shape sheet) ! a
 
+-- convert shape to svg
+
 convertShape :: Shape -> Stylesheet -> S.Svg 
 convertShape Empty sheet = empty
 convertShape shape sheet = foldl (!) (shapeToSvg shape) (parseStylesheet shape sheet)
+
+-- handle empty shapes
 
 empty = S.rect ! A.height "0" ! A.width "0"
 
