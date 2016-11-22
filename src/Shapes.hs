@@ -1,7 +1,5 @@
 module Shapes(
   Shape (..), Point, Vector (..), Transform (..), Drawing (..), Style (..), Stylesheet, Colour (..), 
-  red, green, blue,
-  stroke, fill, outline, size,
   identity, translate, rotate, scale, (<+>)
   )  where
 
@@ -24,13 +22,6 @@ data Style = Stroke Colour
            | Size Double
              deriving (Show, Read)
 
-stroke a = Stroke a
-fill = Fill 
-
-outline, size :: Double -> Style
-outline x = Outline x
-size x = Size x
-
 -- Colours
 
 data Colour = Red
@@ -38,12 +29,6 @@ data Colour = Red
             | Blue
             | Hex String
               deriving (Show, Read)
-
-red, green, blue :: Colour
-
-red = Red
-green = Green
-blue = Blue
 
 -- Shapes
 
@@ -70,15 +55,7 @@ identity = Identity
 translate = Translate
 scale = Scale
 rotate = Rotate
---rotate angle = Rotate $ matrix (cos angle) (-sin angle) (sin angle) (cos angle)
 t0 <+> t1 = Compose t0 t1
-
---transform :: Transform -> Point -> Point
---transform Identity                   x = id x
---transform (Translate (Vector tx ty)) (Vector px py)  = Vector (px - tx) (py - ty)
---transform (Scale (Vector tx ty))     (Vector px py)  = Vector (px / tx)  (py / ty)
---transform (Rotate m)                 p = (invert m) `mult` p
---transform (Compose t1 t2)            p = transform t2 $ transform t1 p
 
 -- Drawings
 
