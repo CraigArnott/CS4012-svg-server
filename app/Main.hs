@@ -20,9 +20,3 @@ main = scotty 3000 $ do
     drawing <- param $ pack "drawing" 
     html $ pack $ convert $ (read drawing :: Drawing)
 
---main :: IO ()
---main = do
---  writeFile "test.svg" $ convert $ (read buildDrawing :: Drawing)
-
-buildDrawing :: String
-buildDrawing = "Drawing [(Compose (Translate (Vector 50 50)) (Rotate 45), Square, [Fill Green, Stroke Blue, Outline 5, Size 100]), (Identity, Circle, [Fill Blue, Size 30])]"
