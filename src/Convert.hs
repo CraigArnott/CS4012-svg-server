@@ -10,7 +10,7 @@ import Text.Blaze.Svg.Renderer.String (renderSvg)
 import Shapes
 import System.IO
 
--- convert drawing to svg
+-- convert drawing to svg string
 
 convert :: Drawing -> String
 convert (Drawing x) = renderSvg $ docHeader $ foldl (>>) empty $ map convertGraphic x
@@ -33,6 +33,12 @@ empty = S.rect ! A.height "0" ! A.width "0"
 
 docHeader :: S.Svg -> S.Svg
 docHeader = S.docTypeSvg ! A.version "1.1" ! A.width "1500" ! A.height "1000" ! A.viewbox "0 0 1500 1000"
+
+-- parsing shapes
+
+shapeToSvg :: Shape -> S.Svg
+shapeToSvg Square = S.rect
+shapeToSvg Circle = S.circle
 
 -- parsing transforms
 
@@ -59,15 +65,11 @@ styleToAttrs _ (Outline x) = [A.strokeWidth $ S.toValue x]
 styleToAttrs Circle (Size x) = [A.r $ S.toValue x]
 styleToAttrs Square (Size x) = [(A.height $ S.toValue x), (A.width $ S.toValue x)]
 
+-- parsing colours
+
 colourToHex :: Colour -> S.AttributeValue
 colourToHex Red = "#ff0000"
 colourToHex Green = "#00ff00"
 colourToHex Blue = "#0000ff"
 colourToHex (Hex s) = S.toValue s
-
--- parsing shapes
-
-shapeToSvg :: Shape -> S.Svg
-shapeToSvg Square = S.rect
-shapeToSvg Circle = S.circle
 
